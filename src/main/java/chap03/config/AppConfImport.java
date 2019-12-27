@@ -2,25 +2,22 @@ package chap03.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import chap03.MemberDao;
 import chap03.MemberPrinter;
 
 @Configuration
-public class AppConf1 {
+@Import(AppConf2.class)
+public class AppConfImport {
+	
 	@Bean
 	public MemberDao memberDao() {
-		System.out.println("memberDao 호출");
 		return new MemberDao();
 	}
 	
 	@Bean
-	public MemberDao memberDao1() {
-		System.out.println("memberDao1 호출");
-		return new MemberDao();
-	}
-	
-	@Bean MemberPrinter memberPrinter() {
+	public MemberPrinter memberPrinter() {
 		return new MemberPrinter();
 	}
 }
