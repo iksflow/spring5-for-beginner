@@ -10,6 +10,7 @@ import chap04.MemberInfoPrinter;
 import chap04.MemberListPrinter;
 import chap04.MemberPrinter;
 import chap04.MemberRegisterService;
+import chap04.MemberSummaryPrinter;
 import chap04.VersionPrinter;
 
 @Configuration
@@ -40,8 +41,9 @@ public class AppCtx {
 		return new MemberPrinter();
 	}
 	@Bean
+	@Qualifier("summaryPrinter")
 	public MemberPrinter memberPrinter2() {
-		return new MemberPrinter();
+		return new MemberSummaryPrinter();
 	}
 	
 	@Bean
@@ -51,7 +53,9 @@ public class AppCtx {
 	
 	@Bean
 	public MemberInfoPrinter infoPrinter() {
-		return new MemberInfoPrinter();
+		MemberInfoPrinter infoPrinter = new MemberInfoPrinter();
+		infoPrinter.setPrinter(memberPrinter2());
+		return infoPrinter;
 	}
 	
 	@Bean
