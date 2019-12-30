@@ -1,4 +1,4 @@
-package chap03;
+package chap04.main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,14 +7,21 @@ import java.io.InputStreamReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import chap03.config.AppConf1;
-import chap03.config.AppConf2;
-import chap03.config.AppConfImport;
+import chap04.ChangePasswordService;
+import chap04.DuplicateMemberException;
+import chap04.MemberInfoPrinter;
+import chap04.MemberListPrinter;
+import chap04.MemberNotFoundException;
+import chap04.MemberRegisterService;
+import chap04.RegisterRequest;
+import chap04.VersionPrinter;
+import chap04.WrongIdPasswordException;
+import chap04.config.AppCtx;
 
-public class MainForSpring2 {
+public class MainForSpring {
 	private static ApplicationContext ctx = null;
 	public static void main(String[] args) throws IOException {
-		ctx = new AnnotationConfigApplicationContext(AppConfImport.class);
+		ctx = new AnnotationConfigApplicationContext(AppCtx.class);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			System.out.println("명령어를 입력하세요.");
