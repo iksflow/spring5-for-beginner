@@ -1,10 +1,17 @@
 package chap08.spring;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class MemberDao {
+	private JdbcTemplate jdbcTemplate;
+	
+	public MemberDao(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
 	public Member selectByEmail(String email) {
 		return null;
 	}
