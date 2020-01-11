@@ -1,6 +1,6 @@
 create user 'spring5'@'localhost' identified by 'spring5';
 
-create database spring5fs character set=utf8;
+create database spring5fs character set = utf8;
 
 grant all privileges on spring5fs.* to 'spring'@'localhost';
 
