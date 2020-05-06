@@ -11,6 +11,10 @@ public class Main {
 		Greeter g = ctx.getBean("greeter", Greeter.class);
 		String msg = g.greet("스프링");
 		System.out.println(msg);
+		VisitCounter v = ctx.getBean("visitCounter", VisitCounter.class);
+		v.increaseCount();
+		String msg2 = v.sayGoodBye();
+		System.out.println(msg2);
 		ctx.close();
 	}
 
