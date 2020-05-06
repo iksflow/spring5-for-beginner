@@ -12,4 +12,11 @@ public class AppContext {
 		g.setFormat("%s, 안녕하세요!");
 		return g;
 	}
+	
+	@Bean
+	public VisitCounter visitCounter() {
+		VisitCounter v = new VisitCounter();
+		v.setFormat("%d번째 손님! 안녕히 가세요!");
+		return v;
+	}
 }
