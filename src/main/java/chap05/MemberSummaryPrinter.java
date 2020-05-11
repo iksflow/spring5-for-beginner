@@ -1,5 +1,8 @@
 package chap05;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MemberSummaryPrinter extends MemberPrinter {
 
 	@Override

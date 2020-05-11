@@ -12,7 +12,7 @@ import chap04.MemberSummaryPrinter;
 import chap04.VersionPrinter;
 
 @Configuration
-@ComponentScan(basePackages = {"chap05"}, excludeFilters = @Filter(type = FilterType.REGEX, pattern = "chap05\\..*Dao"))
+@ComponentScan(basePackages = {"chap05"})
 public class AppCtx {
 	
 	
