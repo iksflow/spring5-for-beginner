@@ -7,16 +7,16 @@ import java.io.InputStreamReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import chap04.ChangePasswordService;
-import chap04.DuplicateMemberException;
-import chap04.MemberInfoPrinter;
-import chap04.MemberListPrinter;
-import chap04.MemberNotFoundException;
-import chap04.MemberRegisterService;
-import chap04.RegisterRequest;
-import chap04.VersionPrinter;
-import chap04.WrongIdPasswordException;
-import chap04.config.AppCtx;
+import chap05.ChangePasswordService;
+import chap05.DuplicateMemberException;
+import chap05.MemberInfoPrinter;
+import chap05.MemberListPrinter;
+import chap05.MemberNotFoundException;
+import chap05.MemberRegisterService;
+import chap05.RegisterRequest;
+import chap05.VersionPrinter;
+import chap05.WrongIdPasswordException;
+import chap05.config.AppCtx;
 
 public class MainForSpring {
 	private static ApplicationContext ctx = null;
