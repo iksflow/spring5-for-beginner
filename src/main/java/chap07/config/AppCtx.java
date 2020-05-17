@@ -6,16 +6,23 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import chap07.Calculator;
 import chap07.RecCalculator;
+import chap07.aspect.CacheAspect;
 import chap07.aspect.ExeTimeAspect;
 
 @Configuration
 @EnableAspectJAutoProxy
 public class AppCtx {
+
+	@Bean
+	public CacheAspect cacheAspect() {
+		return new CacheAspect();
+	}
 	
 	@Bean
 	public ExeTimeAspect exeTimeAspect() {
 		return new ExeTimeAspect();
 	}
+	
 	
 	@Bean
 	public Calculator calculator() {
