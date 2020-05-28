@@ -1,13 +1,10 @@
 package chap08.spring;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 public class MemberDao {
 	private JdbcTemplate jdbcTemplate;
@@ -59,16 +56,22 @@ public class MemberDao {
 		return results;
 	}
 	
+//	public int count() {
+//		List<Integer> results = jdbcTemplate.query("select count(*) from MEMBER",
+//				new RowMapper<Integer>() {
+//
+//					@Override
+//					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+//						return rs.getInt(1);
+//					}
+//			
+//		}); 
+//		return results.get(0);
+//	}
+	
 	public int count() {
-		List<Integer> results = jdbcTemplate.query("select count(*) from MEMBER",
-				new RowMapper<Integer>() {
-
-					@Override
-					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-						return rs.getInt(1);
-					}
-			
-		}); 
-		return results.get(0);
+		Integer count = jdbcTemplate.queryForObject("select count(*) from MEMBER", Integer.class);
+		return count;
 	}
+	
 }
