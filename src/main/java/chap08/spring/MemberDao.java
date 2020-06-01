@@ -1,10 +1,17 @@
 package chap08.spring;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 public class MemberDao {
 	private JdbcTemplate jdbcTemplate;
@@ -46,9 +53,49 @@ public class MemberDao {
 	}
 	
 	public void insert(Member member) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement pstmt = con.prepareStatement(
+						"insert into MEMBER(EMAIL, PASSWORD, NAME, REGDATE) "
+						+ "values(?, ?, ?, ?)"
+						,new String[] {"ID"});
+				pstmt.setString(1, member.getEmail());
+				pstmt.setString(2, member.getPassword());
+				pstmt.setString(3, member.getName());
+				pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
+				
+				return pstmt;
+			}
+			
+		}, keyHolder);
+		Number keyValue = keyHolder.getKey();
+		member.setId(keyValue.longValue());
 	}
 	
 	public void update(Member member) {
+		// 방법 1: String Sql, 가변 인수를 활용한 쿼리 실행
+		jdbcTemplate.update("update MEMBER set NAME = ?, PASSWORD = ? where EMAIL = ?"
+				, member.getName(), member.getPassword(), member.getEmail());
+		// 방법 2: PreparedStatement 객체를 전달한 쿼리 실행
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				// 파라미터로 전달받은 Connection을 이용해서 PreparedStatement 생성
+				PreparedStatement pstmt = con.prepareStatement(
+						"insert into MEMBER (EMAIL, PASSWORD, NAME, REGDATE) values (?, ?, ?, ?)");
+				// 인덱스 파라미터의 값 설정
+				pstmt.setString(1, member.getEmail());
+				pstmt.setString(2, member.getPassword());
+				pstmt.setString(3, member.getName());
+				pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
+				
+				return pstmt;
+			}
+		});
 	}
 	
 	public List<Member> selectAll() {
