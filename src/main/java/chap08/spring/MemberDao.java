@@ -2,14 +2,12 @@ package chap08.spring;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -20,8 +18,8 @@ public class MemberDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	public Member selectByEmail(String email) {
-		List<Member> results = jdbcTemplate.query("select * from MEMBER where EMAIL = ?", 
-				// 익명객체 생성으로 처리하는 방법
+//		List<Member> results = jdbcTemplate.query("select * from `MEMBER` where EMAIL = ?", 
+//				// 익명객체 생성으로 처리하는 방법
 //			new RowMapper<Member>() {
 //				@Override
 //				public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -46,29 +44,33 @@ public class MemberDao {
 //				return member;
 //			}
 				// RowMapper<Member>를 구현하는 객체를 미리 만들어놓고 전달. 자주 사용할 경우 이 방법이 중복제거 측면에서 훨씬 좋다. 
-			new MemberRowMapper()
-		, email);
+//			new MemberRowMapper()
+//		, email);
+		// 람다로 처리하는 방법.
+		List<Member> results = jdbcTemplate.query((Connection con) -> {
+			PreparedStatement pstmt = con.prepareStatement("select * from `MEMBER` where EMAIL = ?");
+			pstmt.setString(1, email);
+			return pstmt;
+		}, new MemberRowMapper());
+
 		
 		return results.isEmpty() ? null : results.get(0);
 	}
 	
 	public void insert(Member member) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcTemplate.update(new PreparedStatementCreator() {
+		jdbcTemplate.update((Connection con) -> {
 
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement pstmt = con.prepareStatement(
-						"insert into MEMBER(EMAIL, PASSWORD, NAME, REGDATE) "
-						+ "values(?, ?, ?, ?)"
-						,new String[] {"ID"});
-				pstmt.setString(1, member.getEmail());
-				pstmt.setString(2, member.getPassword());
-				pstmt.setString(3, member.getName());
-				pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
-				
-				return pstmt;
-			}
+			PreparedStatement pstmt = con.prepareStatement(
+					"insert into `MEMBER`(EMAIL, PASSWORD, NAME, REGDATE) "
+					+ "values(?, ?, ?, ?)"
+					,new String[] {"ID"});
+			pstmt.setString(1, member.getEmail());
+			pstmt.setString(2, member.getPassword());
+			pstmt.setString(3, member.getName());
+			pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
+			
+			return pstmt;
 			
 		}, keyHolder);
 		Number keyValue = keyHolder.getKey();
@@ -77,29 +79,24 @@ public class MemberDao {
 	
 	public void update(Member member) {
 		// 방법 1: String Sql, 가변 인수를 활용한 쿼리 실행
-		jdbcTemplate.update("update MEMBER set NAME = ?, PASSWORD = ? where EMAIL = ?"
-				, member.getName(), member.getPassword(), member.getEmail());
+//		jdbcTemplate.update("update `MEMBER` set NAME = ?, PASSWORD = ? where EMAIL = ?"
+//				, member.getName(), member.getPassword(), member.getEmail());
 		// 방법 2: PreparedStatement 객체를 전달한 쿼리 실행
-		jdbcTemplate.update(new PreparedStatementCreator() {
+		jdbcTemplate.update((Connection con) -> {
+			// 파라미터로 전달받은 Connection을 이용해서 PreparedStatement 생성
+			PreparedStatement pstmt = con.prepareStatement(
+					"update `MEMBER` set PASSWORD = ?, NAME = ? where EMAIL = ?");
+			// 인덱스 파라미터의 값 설정
+			pstmt.setString(1, member.getPassword());
+			pstmt.setString(2, member.getName());
+			pstmt.setString(3, member.getEmail());
 			
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				// 파라미터로 전달받은 Connection을 이용해서 PreparedStatement 생성
-				PreparedStatement pstmt = con.prepareStatement(
-						"insert into MEMBER (EMAIL, PASSWORD, NAME, REGDATE) values (?, ?, ?, ?)");
-				// 인덱스 파라미터의 값 설정
-				pstmt.setString(1, member.getEmail());
-				pstmt.setString(2, member.getPassword());
-				pstmt.setString(3, member.getName());
-				pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
-				
-				return pstmt;
-			}
+			return pstmt;
 		});
 	}
 	
 	public List<Member> selectAll() {
-		List<Member> results = jdbcTemplate.query("select * from MEMBER", new MemberRowMapper());
+		List<Member> results = jdbcTemplate.query("select * from `MEMBER`", new MemberRowMapper());
 		return results;
 	}
 	
@@ -117,7 +114,7 @@ public class MemberDao {
 //	}
 	
 	public int count() {
-		Integer count = jdbcTemplate.queryForObject("select count(*) from MEMBER", Integer.class);
+		Integer count = jdbcTemplate.queryForObject("select count(*) from `MEMBER`", Integer.class);
 		return count;
 	}
 	
